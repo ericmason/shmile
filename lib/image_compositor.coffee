@@ -24,7 +24,7 @@ class ImageCompositor
   init: ->
     emitter = new EventEmitter()
     emitter.on "composite", =>
-      convertArgs = [ "-size", TOTAL_WIDTH + "x" + TOTAL_HEIGHT, "canvas:white" ]
+      convertArgs = [ "-size", TOTAL_WIDTH + "x" + TOTAL_HEIGHT, "canvas:white", "-quality", "70"]
       utcSeconds = (new Date()).valueOf()
       IMAGE_GEOMETRY = "#{IMAGE_WIDTH}x#{IMAGE_HEIGHT}"
       OUTPUT_PATH = "#{@opts.tmp_dir}/out.jpg"
@@ -51,14 +51,14 @@ class ImageCompositor
       )
 
       doCompositing = =>
-        compositeArgs = [ "-gravity", "center", @opts.overlay_src, OUTPUT_PATH, "-geometry", TOTAL_WIDTH + "x" + TOTAL_HEIGHT, FINAL_OUTPUT_PATH ]
+        compositeArgs = [ "-quality", "70", "-gravity", "center", @opts.overlay_src, OUTPUT_PATH, "-geometry", TOTAL_WIDTH + "x" + TOTAL_HEIGHT, FINAL_OUTPUT_PATH ]
         console.log("executing: composite " + compositeArgs.join(" "))
         exec "composite " + compositeArgs.join(" "), (error, stderr, stdout) ->
           throw error  if error
           emitter.emit "composited", FINAL_OUTPUT_PATH
           doGenerateThumb()
 
-      resizeCompressArgs = [ "-size", "25%", "-quality", "20", FINAL_OUTPUT_PATH, FINAL_OUTPUT_THUMB_PATH ]
+      resizeCompressArgs = [ "-size", "25%", "-quality", "70", FINAL_OUTPUT_PATH, FINAL_OUTPUT_THUMB_PATH ]
       doGenerateThumb = =>
         im.convert resizeCompressArgs, (e, out, err) ->
           throw err  if err
